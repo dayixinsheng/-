@@ -1,0 +1,702 @@
+#include<stdio.h>
+#include<windows.h>
+#include<stdlib.h>
+#include<string.h>
+#define PASS 2019
+#define NAMER "pkj"
+/*说明：这是一个学生学习管理系统，主要实现的功能为增、删、改、查。且仅仅管理员可以增、删、改、查，搜，排，学生只可以查、搜、排。 编写时间长达两周。
+温馨提示：管理员用户名为pkj，密码2019.学生可以自行注册；管理员仅限一名，且只能按用户名密码登录。
+坐标：广州大学城.广东工业大学
+作者：生活之草（grass_in_life）
+（附：如果有需要可以自行拿走，不过希望至少附上此github链接。）
+*/
+int main()
+{
+	
+	void show();		//图形界面函数
+	void sort();		//排序函数 
+	void add();			//增加学生信息函数
+	void del();			//删除函数
+	void change();		//改动函数 
+	void search();		//查询函数			 
+	FILE* login();		//登录函数 
+	
+	show();		
+	login();			//几乎全部功能都在这个函数里 
+	
+	return 0; 
+	
+}
+void show()//图形界面函数 
+{
+	system( "color 81 "); //清屏不影响此行 
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("	 ==========================================================================================================\n\n\n\n");
+	printf("	【**************************************这是一个学生信息管理系统******************************************】\n\n\n\n");
+	printf("	【=============================请在下方空格中按回车键之后输入你要继续的操作=================================】\n\n\n\n");
+	printf("	【==============================版本1.0，发布by 生活之草，一个想有所作为的大学生嘤嘤嘤~=====================】\n\n\n\n");
+	printf("	【============================================2019年12月13日=============================================】\n\n\n\n");
+	printf("	 ==========================================================================================================\n\n\n\n");
+	getchar();
+	
+}
+void add()			//增加学生信息函数
+{
+	FILE*fp; 
+	struct Student{
+		char name[20];
+		long int num;
+		float score;
+	}student,student1[100];
+	if((fp=fopen("Studentmessge.txt","a+"))==NULL)
+	{
+		printf("无法打开文件，系统将退出。。。\n");
+		exit(0);
+	}
+	int flag=1;
+	int i=0;
+	int number=0;
+	while(flag)
+	{
+		if(fread(&student1[i],sizeof(struct Student),1,fp)!=NULL)
+		;
+		else flag=0;
+		i++;
+	}
+	number=i;
+	
+	
+	printf("请在按回车键之后分别输入要新增的学生的学号、名字、总分数，中间用空格隔开。\n");
+	getchar();
+	scanf("%d %s %f",&student.num,&student.name,&student.score);
+	getchar();		//消除回车键 
+	
+	flag=1;
+	i=0;
+	while(flag)
+	{
+		if(strcmp(student.name,student1[i].name)==0&&i<number-1)
+		{
+		printf("学生已存在，身为管理员，您可以选择改动该生成绩/学号/名字。。。下面请在按回车键之后再操作。\n");
+		Sleep(3000);
+		flag=0;
+		}
+		else {
+			if((fp=fopen("Studentmessge.txt","a+"))==NULL)
+    {
+  	printf("无法打开学生信息文件！\n");
+	exit(0);	
+    }
+    if(fwrite(&student,sizeof(struct Student),1,fp)!=1) 
+    printf("写入学生信息文件失败！\n");
+    fclose(fp); 
+    printf("新增学生信息成功！请稍后...\n");
+    
+    //下面验证一次新增是否输入成功（重复新增需要重复调用此函数）。
+	if((fp=fopen("Studentmessge.txt","a+"))==NULL)
+    {
+  	printf("学生信息文件不存在！\n");
+	exit(0);	
+    } 
+    flag=1;
+    i=0;
+    printf("下面是所有你新增的学生信息表（不一定排过序）。\n"); 
+    printf("|*|   学号  ||   名字   ||   分数  |*| \n");
+	while(flag)				 							 
+		{
+			if(fread(&student1[i],sizeof(struct Student),1,fp)!=NULL) 
+				printf("|*|%-8d || %-8s || %-8.2f|*| \n",student1[i].num,student1[i].name,student1[i].score); 
+			else flag=0;
+			i++;
+		}
+    fclose(fp);									     
+  	Sleep(1000); 
+  	flag=0;
+    printf("查询新增学生信息成功！\n下面请在按回车键之后再操作。\n");
+		}
+	}
+	
+    
+    getchar();
+    printf("增加-----a\n");
+			printf("删除-----d\n");
+			printf("改动-----c\n");
+			printf("搜索-----s\n");
+		//	printf("查询注册信息-----g\n");
+			printf("退出循环---e\n");
+			printf("请在下面输入操作：\n");
+    
+} 
+void sort()					//排序函数 
+{
+	FILE*fp;
+	int number=0;
+	struct Student{
+		char name[20];
+		int num;
+		float score;
+	}student[100],tmp;		//student[100]最多可以容纳100个学生登记的信息 
+	if((fp=fopen("Studentmessge.txt","a+"))==NULL)	 
+	{
+	printf("无法打开此文件！将退出整个系统...\n");
+	exit(0);	
+	}
+	int flag=1;
+	int i=0;
+	while(flag)
+	{
+		if(fread(&student[i],sizeof(struct Student),1,fp)!=NULL)
+		;
+		else 
+		flag=0;
+		i++;
+	}
+	fclose(fp);
+	/*下面是选择排序*/
+	number=i;
+	i=0;
+	int j,k;
+	for(i=0;i<number-1;i++)//这里因为存在i+1所以要防止i溢出 
+	{
+		k=i;
+		for(j=i+1;j<number;j++)
+		{
+		if(student[j].num>student[k].num)
+		   k=j;
+		tmp=student[k];
+		student[k]=student[j];
+		student[j]=tmp;
+		 
+		}
+	} 
+	
+	/*输出排序结果*/
+	flag=1;
+	i=0; 
+	printf("*全部学生信息如下：\n");
+	printf("|*|   学号  ||   名字   ||   分数  |*| \n");
+	while(flag)				  
+		{
+			if(i<number-1)
+				printf("|*|%-8d || %-8s || %-8.2f|*| \n",student[i].num,student[i].name,student[i].score); 
+			else flag=0;
+			i++;
+		}
+		
+	/*覆盖原文件*/
+	if((fp=fopen("Studentmessge.txt","r+"))==NULL)	
+	{
+	printf("无法打开此文件！将退出系统...\n");
+	exit(0);	
+	}
+	flag=1;
+	i=0;
+	while(flag)
+	{	if(i<number-1)
+		fwrite(&student[i],sizeof(struct Student),1,fp);
+		else flag=0;
+		i++;
+	}		
+	fclose(fp);
+	
+}
+void del()			//删除函数
+{
+	FILE*fp; 
+	struct Student{
+		char name[20];
+		int num;
+		float score;
+	}student[100];
+	int number=0;
+	if((fp=fopen("Studentmessge.txt","a+"))==NULL)
+	{
+		printf("无法打开文件!退出系统...\n");
+		exit(0); 
+	}
+	int flag=1;
+	int i=0;
+	while(flag)
+	{
+		if(fread(&student[i],sizeof(struct Student),1,fp)!=NULL)
+		;
+		else flag=0;
+		i++;
+	}
+	fclose(fp);
+	number=i;
+	
+	int del;
+	printf("请在按回车键后输入要删除的学生学号：\n");
+	getchar();
+	scanf("%d",&del);
+	flag=1;
+	i=0;
+	while(flag)
+	{
+		if(del==student[i].num&&i<number-1)
+		{
+		student[i]=student[i+1];
+		}
+		else if(del==student[i].num&&i==(number-2))//number是i+1,因为最后i++了；number-1是数组最后一个下标，number-2是删除之后的下标。 
+		{
+			;//什么位置都不要动，就只在输出时不输出最后一个。 
+		}
+		else flag=0;
+		i++;
+	}
+	/*验证*/
+	printf("删除后的学生信息表如下：\n");
+	flag=1;
+	i=0; 
+	printf("|*|   学号  ||   名字   ||   分数  |*| \n");
+	while(flag)				  
+		{
+			if(i<number-2)//这里删掉了一个，故-2 
+				printf("|*|%-8d || %-8s || %-8.2f|*| \n",student[i].num,student[i].name,student[i].score); 
+			else flag=0;
+			i++;
+		}
+
+	/*覆盖原文件*/
+	if((fp=fopen("Studentmessge.txt","w+"))==NULL)
+	{
+		printf("无法打开文件，系统退出。。。\n");
+		exit(0);
+	}
+	flag=1;
+	i=0;
+	while(flag)
+	{	if(i<number-2)
+		fwrite(&student[i],sizeof(struct Student),1,fp);
+		else flag=0;
+		i++;
+	}		
+	fclose(fp);
+	
+	printf("增加-----a\n");
+			printf("删除-----d\n");
+			printf("改动-----c\n");
+			printf("搜索-----s\n");
+		//	printf("查询注册信息-----g\n");
+			printf("退出循环---e\n");
+			printf("请在下面输入操作：\n");
+} 
+void change()		//改动函数
+{
+		FILE*fp; 
+	struct Student{
+		char name[20];
+		int num;
+		float score;
+	}student[100];
+	int number=0;
+	if((fp=fopen("Studentmessge.txt","a+"))==NULL)
+	{
+		printf("无法打开文件!退出系统...\n");
+		exit(0); 
+	}
+	int flag=1;
+	int i=0;
+	while(flag)
+	{
+		if(fread(&student[i],sizeof(struct Student),1,fp)!=NULL)
+		;
+		else flag=0;
+		i++;
+	}
+	fclose(fp);
+	number=i;
+	
+	int numchange;
+	printf("请输入要改动的学生学号：\n");
+	scanf("%d",&numchange);
+	flag=1;
+	i=0;
+	while(flag)
+	{
+		if(numchange==student[i].num&&i<(number-1))
+		{printf("请输入要改动的学生成绩：\n");
+		 scanf("%f",&student[i].score);
+		 getchar();
+		 printf("改动后的学生信息显示如下：\n");
+		 printf("|*|   学号  ||   名字   ||   分数  |*| \n");
+		 printf("|*|%-8d || %-8s || %-8.2f|*| \n",student[i].num,student[i].name,student[i].score); 
+		}
+		else if(numchange!=student[i].num&&i<(number-1))
+		printf("很抱歉，查无此人...\n");
+		else flag=0;
+		i++;
+	} 
+	/*覆盖原文件*/
+	if((fp=fopen("Studentmessge.txt","r+"))==NULL)	
+	{
+	printf("无法打开此文件！将退出系统...\n");
+	exit(0);	
+	}
+	flag=1;
+	i=0;
+	while(flag)
+	{	if(i<number-1)
+		fwrite(&student[i],sizeof(struct Student),1,fp);
+		else flag=0;
+		i++;
+	}		
+	fclose(fp);
+	
+	printf("增加-----a\n");
+			printf("删除-----d\n");
+			printf("改动-----c\n");
+			printf("搜索-----s\n");
+		//	printf("查询注册信息-----g\n");
+			printf("退出循环---e\n");
+			printf("请在下面输入操作：\n");
+	
+} 
+void search()		//查询函数
+{
+	FILE*fp; 
+	struct Student{
+		char name[20];
+		int num;
+		float score;
+	}student[100];
+	int number=0;
+	if((fp=fopen("Studentmessge.txt","a+"))==NULL)
+	{
+		printf("无法打开文件!退出系统...\n");
+		exit(0); 
+	}
+	int flag=1;
+	int i=0;
+	while(flag)
+	{
+		if(fread(&student[i],sizeof(struct Student),1,fp)!=NULL)
+		;
+		else flag=0;
+		i++;
+	}
+	fclose(fp);
+	number=i;
+	//以上是通式，用于打开文件读取数并记录数据元素个数（number-1个） 
+	char choice;
+	printf("请问您是要按哪种方式查找？请按回车键后输入查找方式：\n");
+	printf("按学生学号查找--------N；\n");
+	printf("按学生名字查找--------M；\n");
+	getchar();
+	scanf("%c",&choice);
+	getchar();
+	
+	if(choice=='N'||choice=='n')
+	{
+		int i=0;
+		int flag=1;
+		int numfind;
+		printf("请输入你要查找的学生学号：\n");
+		scanf("%d",&numfind);
+		while(flag)
+		{
+			if(numfind==student[i].num&&i<number-1)
+			{
+				printf("|*|   学号  ||   名字   ||   分数  |*| \n");
+				printf("|*|%-8d || %-8s || %-8.2f|*| \n",student[i].num,student[i].name,student[i].score); 
+			}
+			else if(numfind!=student[i].num&&i<number-1) 
+			printf("很抱歉，查无此人...\n");
+			else flag=0;
+			i++;
+		}
+	}
+	else if(choice=='M'||choice=='m')
+	{
+		int i=0;
+		int flag=1;
+		char namefind[20];
+		printf("请输入你要查找的学生名字：(注意要准确，不能多出空格)\n");
+		scanf("%s",&namefind);
+		while(flag)
+		{
+			if(strcmp(namefind,student[i].name)==0&&i<number-1)
+			{
+				printf("|*|   学号  ||   名字   ||   分数  |*| \n");
+				printf("|*|%-8d || %-8s || %-8.2f|*| \n\n\n\n",student[i].num,student[i].name,student[i].score); 
+			}
+			else if(strcmp(namefind,student[i].name)!=0&&i<number-1)
+			printf("很抱歉，查无此人...\n");
+			else flag=0;
+			i++;
+		}	
+	}
+	else printf("...很抱歉，你输入的不是N或者M，将回到管理员操作界面。。。\n");
+	Sleep(5000);
+	
+    printf("增加-----a\n");
+			printf("删除-----d\n");
+			printf("改动-----c\n");
+			printf("搜索-----s\n");
+		//	printf("查询注册信息-----g\n");
+			printf("退出循环---e\n");
+			printf("请在下面输入操作：\n");
+} 
+
+
+FILE* login()		//登录函数
+{
+	
+	system("cls");
+	int number=0;	//number用于标记当前是第几位注册用户 ,若注册成功便+1,否则不变 ，此行只执行一次 
+	FILE*fp;
+	struct Student{
+		int name[20];
+		int num;
+		float score;
+	}student[100];		//最多可以容纳100个学生登记的信息 
+	struct Register{
+		int password;	//密码最多只能输入10位，且只能是数字。
+		char name[20];	//用户名,只能输入英文字母	
+	}register1[100];	//最多可以容纳100个用户（包括管理员)注册的信息 
+	char choice='s';
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	while(1){/*管理员和学生登录、操作界面（循环）*/
+	printf("	 ==========================================================================================================\n\n\n\n");
+	printf("	【======================管理员登录在按回车键之后按G/g,学生请在按任意键之后按S/s===========================】\n\n\n\n");
+	printf("	【======================================未注册？请在按任意键之后按Z/z=====================================】\n\n\n\n");
+	printf("	【==================================若要退出系统，请按任意键之后按e/E=====================================】\n\n\n\n");
+	printf("	 ==========================================================================================================\n\n\n\n");
+	getchar(); 
+	scanf("%c",&choice);
+	getchar();//此行一定要有，否则会因为回车键被当做循环下次的choice而永远无法退出系统。
+	if(choice=='G'||choice=='g')
+		{
+			if((fp=fopen("Regsitermessge.txt","a"))==NULL)
+			{
+			printf("无法打开文件或者根本没有注册！请先注册管理员账号并设置密保问题！系统将退出。。。\n");
+			exit(0);
+			} 
+			int flag=1;
+			int i=0;
+			int number=0;
+			while(flag)
+			{
+				if(fread(&register1[i],sizeof(struct Register),1,fp)!=NULL)
+				;
+				else flag=0;
+				i++;
+			}
+			number=i;
+			/*管理员登录*/
+			char namecompare[20];
+			int  passwordcompare; 
+			printf("请输入管理员用户名(注册遇到重名重密码看做是同一账户)：\n");
+			scanf("%s",&namecompare);
+			printf("请输入当前账户密码：\n");
+			scanf("%d",&passwordcompare);
+			
+			flag=1;
+			i=0;
+			while(flag)
+			{
+				if((strcmp(namecompare,register1[i].name)==0)&&(passwordcompare==register1[i].password))
+				flag =0;
+				else if(strcmp(namecompare,NAMER)==0&&passwordcompare==PASS)
+				flag=0;
+				else 
+				{
+				printf("登陆失败。。。请检查您的管理员用户名和密码是否输入错误，系统将退出，请重新打开程序登陆。\n");
+				Sleep(1000);
+				exit(0);
+				}
+				i++;
+			}
+						
+			char choice1;
+			system("cls");
+			printf("\n\n\n\n	 ===============================欢迎你，管理员。====================================================\n");
+			printf("增加-----a\n");
+			printf("删除-----d\n");
+			printf("改动-----c\n");
+			printf("搜索-----s\n"); 
+			printf("查询注册信息-----z\n");
+			printf("退出循环---e\n");
+			while(1){/*管理员操作界面（循环）*/
+			scanf("%c",&choice1);
+			if(choice1=='a') 
+			add();			//增加学生信息函数
+			if(choice1=='d') 
+			{ 
+			del();			//删除函数
+			}
+			if(choice1=='c') 
+			{
+			change();		//改动函数（学生的信息变动）
+			}
+			if(choice1=='s')  
+			{
+			search();		//查询函数
+			}
+			if(choice1=='p')
+			sort();			//排序函数
+			if(choice1=='z')
+			{
+				//管理员查看已注册信息 
+				if((fp=fopen("Registermessge.txt","r"))==NULL)	
+				{
+				printf("无法打开此文件！系统将退出。。。\n");
+				exit(0);	
+				}
+				printf("下面是所有学生注册信息（请谨慎保密密码。）：\n");
+				printf("用户名 || 密码\n");
+				
+				int flag1=1;
+				int i=0;
+				while(flag1)
+				{
+					if(fread(&register1[i],sizeof(struct Register),1,fp)!=NULL)
+						printf("%-10s || %-8d\n",register1[i].name,register1[i].password); 
+					else flag1=0;
+					i++;
+				}
+				fclose(fp);
+				Sleep(1000);
+				
+				printf("增加-----a\n");
+				printf("删除-----d\n");
+				printf("改动-----c\n");
+				printf("搜索-----s\n"); 
+				printf("查询注册信息-----z\n");
+				printf("退出循环---e\n");
+			} 
+			if(choice1=='e')
+			break;
+			}
+		}
+	else if(choice=='S'||choice=='s')
+	{
+		if((fp=fopen("Regstermessge.txt","a"))==NULL)
+			{
+			printf("无法打开文件或者根本没有注册！请先注册管理员账号并设置密保问题！系统将退出。。。\n");
+			Sleep(3000);
+			exit(0);
+			} 
+			int flag=1;
+			int i=0;
+			int number=0;
+			while(flag)
+			{
+				if(fread(&register1[i],sizeof(struct Register),1,fp)!=NULL)
+				;
+				else flag=0;
+				i++;
+			}
+			number=i;
+			/*学生登录*/
+			char namecompare[20];
+			int  passwordcompare; 
+			printf("请输入学生用户名(注册遇到重名重密码看做是同一账户)：\n");
+			scanf("%s",&namecompare);
+			printf("请输入当前账户密码：\n");
+			scanf("%d",&passwordcompare);
+			
+			flag=1;
+			i=0;
+			while(flag)
+			{
+				if((strcmp(namecompare,register1[i].name)==0)&&(passwordcompare==register1[i].password))
+				flag =0;
+				else if(strcmp(namecompare,NAMER)==0&&passwordcompare==PASS)
+				flag=0;
+				else 
+				{
+				printf("登陆失败。。。请检查您的学生用户名和密码是否输入错误，系统将退出，请重新打开程序登陆。\n");
+				Sleep(1000);
+				exit(0);
+				}
+				i++;
+			}
+		system("cls");
+		printf("\n\n\n\n	 ===============================欢迎你，学生。====================================================\n");
+		char choicestudent;
+		printf("搜索-----s\n");
+		printf("排序-----P\n");
+	    printf("按任意键后输入操作：\n");
+		getchar();
+	    scanf("%c",&choicestudent);
+	    getchar();			//此行要有，吸收回车键 
+	    if(choicestudent=='s')
+	    search();
+	    else if (choicestudent=='p')
+	    sort();
+	    else printf("你输入的既不是s也不是p，将回到登录界面...\n");
+	    Sleep(1000);
+	}
+	else if(choice=='Z'||choice=='z')
+			{
+				int flag=1;
+				while(flag){
+				system("cls");
+				printf("欢迎注册！\n");
+					/*注册函数*/
+					printf("	  =========================================================================================================\n\n\n\n");
+					printf("	 【===================请分别输入你注册的学生用户名和设置的密码，中间用空格隔开============================】\n\n\n\n");
+					printf("	 【===============(请注意：用户名,只能输入英文字母；密码最多只能输入10位，且只能是数字。)=================】\n\n\n\n");
+					printf("	  =========================================================================================================\n\n\n\n");
+					printf("您是打开此程序之后的第%d位注册用户\n",number+1);
+					scanf("%s %d",&register1[number].name,&register1[number].password);
+					/*本来这里是要判断输入格式是否正确以及是否已有相同用户名冲突导致无法注册的，省略跳过*/
+					printf("注册成功！\n");
+					number++;
+					printf("是否继续注册？按任意键后,输入Y/N(或按任意键退出)\n");
+					getchar();
+					char ch; 
+					scanf("%c",&ch);
+					getchar();//消除回车键(回主界面） 
+					if(ch=='Y'||ch=='y')
+					;
+					else 
+					flag=0;
+				}
+				if((fp=fopen("Regstermessge.txt","a+"))==NULL)	//注意这里是regstermessge,故意写少了i，以区别学生和管理员的注册文件 
+				{
+				printf("无法打开此文件！\n");
+				exit(0);	
+				}
+				for(int i=0;i<number;i++)
+					fwrite(&register1[i],sizeof(struct Register),1,fp);
+				fclose(fp);
+				printf("注册信息保存成功！\n");
+				printf("1秒之后将回到管理员登录与学生浏览界面...\n");
+				Sleep(1000); 
+	 			system("cls");
+							
+			}
+	else if(choice=='E'||choice=='e')
+		break;
+	else/*机智处理*/ 
+	 {  printf("emmm...你输入的不是g/s/w/z/e(不区分大小写)中的任何一个操作，或者登陆管理员失败，3秒之后将重新回到管理员登录与学生浏览界面\n");
+	 	Sleep(3000);
+	 	system("cls");
+	 }
+		
+	}
+	printf("成功退出系统！\n");
+	return fp;
+}
+ 
