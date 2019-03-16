@@ -1,3 +1,5 @@
+/*参考文章：https://www.cnblogs.com/liuzhenlong/p/4940599.html */
+
 package xueshengguanlixitong;
 import java.util.*;
 //学生类---------------------------------------------------------------------
