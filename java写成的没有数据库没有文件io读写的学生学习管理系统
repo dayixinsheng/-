@@ -1,0 +1,248 @@
+package xueshengguanlixitong;
+import java.util.*;
+//学生类---------------------------------------------------------------------
+class student{
+		private String name;
+		private int score;
+		private long phone;
+		private int id;
+	//构造方法
+	public student(String name,int score,long phone, int id){
+		this.name=name;
+		this.score=score;
+		this.phone=phone;
+		this.id=id;
+	}
+	//各种get（得到）,set（更改器）方法
+	public int getId() {
+		return id;
+	}
+	public String getName(){
+		return name;
+	}
+	public int getScore(){
+		return score;
+	}
+	public long getPhone(){
+		return phone;
+	}
+	public void setName(String name){
+		this.name=name;
+	}
+	public void  setScore(int score){
+		this.score=score;
+	}
+	public void setPhone(long phone){
+		this.phone=phone;
+	}
+	
+}
+//--------------------------------------------------------------------------
+public class xueshengguanlixitong {
+
+	static List<student> stu=new LinkedList<student>();
+	static int nextid=0;//谁都不可以（没有权限）更改学号
+	public static void main(String[]args)  {
+			
+		print();//主界面
+		Scanner sc=new Scanner(System.in);
+		int choice1=sc.nextInt();
+	while(true) {	
+	switch(choice1) {
+	case 1:{
+		creat();
+	} break;
+	case 2:{
+		System.out.println("请输入你要查询的同学的名字：");
+		Scanner sc1=new Scanner(System.in);
+		String name=sc1.next();
+		System.out.println("下面是查询到的同学的信息：");
+		System.out.println("名字\t近期考试成绩\t联系电话\t唯一学号");
+		find(name);
+	} break;
+	case 3:
+		delete();break;
+	case 4:{
+		System.out.println("请输入你要修改的同学的名字：");
+		Scanner sc1=new Scanner(System.in);
+		String name=sc1.next();
+		System.out.println("下面是查询到的该同学的信息：");
+		System.out.println("名字\t近期考试成绩\t联系电话\t唯一学号");
+		find(name);
+		change(name);
+		}break;
+	case 5:{
+		System.out.println("系统程序退出！");
+		System.exit(0);
+		}break;
+	default : System.out.println("系统判断你输入非法！");
+	}
+	
+		print();
+		choice1=new Scanner(System.in).nextInt();
+	}
+}
+	
+	
+	public static void print() {//类方法只能处理类变量
+		// TODO Auto-generated method stub
+			System.out.println("==========================");
+			System.out.println("你好呀，来操作这个学生学习管理系统吧！");
+			System.out.println("请输入1新增学生数据；");
+			System.out.println("请输入2查询学生数据；");
+			System.out.println("请输入3删除学生数据；");
+			System.out.println("请输入4修改学生数据；");
+			System.out.println("请输入5退出系统；");		
+			System.out.println("==========================");
+			System.out.println("现在请做出你的选择：");
+	} 
+	public static void creat()  {
+		Scanner sc=new Scanner(System.in);
+		System.out.println("请输入学生姓名：");
+		String name=sc.nextLine();
+		System.out.println("请输入学生分数：");
+		int score=sc.nextInt();
+		System.out.println("请输入学生联系电话：");
+		long phone=sc.nextInt();
+		nextid++;
+		int id=nextid;
+		stu.add(new student(name,score,phone,id));
+		System.out.println("添加完毕。");
+		
+	}
+	public static void delete() {
+		System.out.println("请告诉我你要删那个同学他的名字：");
+		Scanner sc=new Scanner(System.in);
+		String delete=sc.next();
+		find(delete);
+		boolean y=true;
+		for(student i:stu) {
+			if(i.getName().equals(delete)) {
+				stu.remove(i.getId()-1);//尤其要注意这里不是直接remove(i),因为remove的是int类型的index
+				System.out.println("删除完毕。那位同学已经不见了哟~");
+				y=false;
+				}
+			}
+		
+		if(y) {
+			System.out.println("因为某种原因，删除失败了呢。。");
+		}
+		
+		
+	}
+	
+	public static void find(String name) {
+		boolean isfind=true;
+		for(student i:stu) {
+			if(i.getName().equals(name))
+				System.out.println(i.getName()+"\t"+i.getScore()+"\t"+i.getPhone()+"\t"+i.getId());
+			isfind=false;
+		}
+		if(isfind) {
+			System.out.println("这边并没有您要找的同学呢~请检查您的输入后再试试。");
+		}
+	
+	}
+	public static void find(int s) {
+		boolean isfind=true;
+		for(student i:stu) {
+			if(i.getScore()==s) {
+				System.out.println(i.getName()+"\t"+i.getScore()+"\t"+i.getPhone());
+				isfind=false;
+			}
+		}
+		if(isfind) {
+			System.out.println("这边并没有您要找的同学呢~请检查您的输入后再试试。");
+		}
+	}
+	public static void find(long s) {
+		boolean isfind=true;
+		for(student i:stu) {
+			if(i.getPhone()==s) {
+				isfind =false;
+				System.out.println(i.getName()+"\t"+i.getScore()+"\t"+i.getPhone());
+		}
+		}
+		if(isfind) {
+			System.out.println("这边并没有您要找的同学呢~请检查您的输入后再试试。");
+		}
+	}
+	public static void change(String name)  {
+		boolean c=true;//检查是否找到
+		while(true) {
+		
+		for(student i:stu) {
+			if(i.getName().equals(name)) {
+				c=false;
+				System.out.println("==============================");
+				System.out.println("这边想询问亲亲您想修改这位同学的哪项信息呢~");
+				System.out.println("1 修改 名字");
+				System.out.println("2 修改 近期分数");
+				System.out.println("3 修改 联系电话");
+				System.out.println("==============================");
+				
+				Scanner sc=new Scanner(System.in);
+				int n=sc.nextInt();
+				switch (n) {
+				case 1: {
+					System.out.println("您选择了修改 名字，下面是该同学的名字：");
+					System.out.println(i.getName());
+					System.out.println("现修改为：");
+					Scanner sc3=new Scanner(System.in);
+					String name1=sc3.nextLine();
+					i.setName(name1);
+					System.out.println("下面是的该同学的信息，请核查是否已经更改。");
+					System.out.println("名字\t近期考试成绩\t联系电话\t唯一学号");
+					find(name1);
+				}break;
+				case 2:{
+					System.out.println("您选择了修改 近期分数，下面是该同学的近期分数：");
+					System.out.println(i.getScore());
+					System.out.println("现修改为：");
+					Scanner sc3=new Scanner(System.in);
+					int score1=sc3.nextInt();
+					i.setScore(score1);
+					System.out.println("下面是的该同学的信息，请核查是否已经更改。");
+					System.out.println("名字\t近期考试成绩\t联系电话\t唯一学号");
+					find(score1);
+				}break;
+				case 3:{
+					System.out.println("您选择了修改 联系电话，下面是该同学的联系电话：");
+					System.out.println(i.getScore());
+					System.out.println("现修改为：");
+					Scanner sc3=new Scanner(System.in);
+					long phone1=sc3.nextLong();
+					i.setPhone(phone1);
+					System.out.println("下面是的该同学的信息，请核查是否已经更改。");
+					System.out.println("名字\t近期考试成绩\t联系电话\t唯一学号");
+					find(phone1);
+				}break;
+				default : System.out.println("系统判断你输入非法！");
+				}
+				System.out.println("是否继续修改？y/n");
+				Scanner sc3=new Scanner(System.in);
+				String choice3=sc3.next();
+				if(choice3.equals("y"))
+					{System.out.println("请输入要修改的下一位同学的名字：");
+					Scanner sc1=new Scanner(System.in);
+					name=sc1.next();
+					break;//
+					}
+				else System.exit(0);
+				}
+			}
+		if(c) {
+				System.out.println("亲亲这边没有找到您输入的同学信息呢，请检查后再输入哦~");
+				
+				System.out.println("是否继续修改？y/n");
+				Scanner sc3=new Scanner(System.in);
+				String choice3=sc3.next();
+				if(choice3.equals("y"))
+					break;
+				else System.exit(0);
+		
+		}
+	}
+
+	}
+	}
